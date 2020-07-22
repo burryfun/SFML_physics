@@ -13,10 +13,11 @@
 #include <SFML/Window/Window.hpp>
 #include <cmath>
 #include <iostream>
+#include <math.h>
 void Object::initVariables()
 {
 	MAX_POINTS = 40;
-	VISCOSITY = 0.02f;
+	VISCOSITY = 0.5f;
 	COLOR_SHAPE = sf::Color::Red;
 
 	m_radius = 100;
@@ -27,6 +28,7 @@ void Object::initVariables()
 	m_vertices.setPrimitiveType(sf::LinesStrip);
 	m_vertices.resize(MAX_POINTS);
 	m_color = COLOR_SHAPE;
+	m_mass = m_radius;
 }
 
 void Object::initShape()
@@ -71,11 +73,12 @@ Object::Object(sf::Vector2f center, float radius)
 {
 	initVariables();
 	m_center = center;
-	m_radius = rand()%50 + 10;
+	m_radius = rand()%50 + 10.f;
 	COLOR_SHAPE = sf::Color::Yellow;
 	m_color = COLOR_SHAPE;
 	m_velocity = sf::Vector2f(0.f, 0.f);
 	m_acceleration = sf::Vector2f(0.f, 0.f);
+	m_mass = m_radius;
 }
 
 Object::~Object()
@@ -115,28 +118,41 @@ sf::Vector2f Object::getVelocity()
 	return m_velocity;
 }
 
-void Object::updateVelocity(const float& time)
+void Object::updateVelocity(float deltaTime)
 {
 	std::cout << getVelocity().x << " " << getVelocity().y << std::endl; 
-	updateAcceleration();
+	//std::cout << atan2f(m_velocity.y, m_velocity.x) << std::endl;
+	//updateAcceleration();
+	/*
 	viscosity.x = -m_velocity.x * VISCOSITY;
 	viscosity.y = -m_velocity.y * VISCOSITY;
 	m_velocity.x += (m_acceleration.x + viscosity.x)/2;
 	m_velocity.y += (m_acceleration.y + viscosity.y)/2;
-	//rotate(m_velocity.x);
-	if (std::abs(m_velocity.x) > 0.01f || std::abs(m_velocity.y) > 0.01f)
-	{
-		setPosition(m_center.x + m_velocity.x, m_center.y + m_velocity.y);
-	}
-	else
+	*/
+	m_acceleration = -m_velocity * VISCOSITY;
+	m_velocity += m_acceleration * deltaTime;
+	setPosition(m_center.x + m_velocity.x, m_center.y + m_velocity.y);
+	setAngle(atan2f(m_velocity.y, m_velocity.x)*180.f/M_PI);
+	if (std::abs(m_velocity.x) < 0.01f || std::abs(m_velocity.y) < 0.01f)
 	{
 		m_velocity = sf::Vector2f(0.f,0.f);
+
 	}
 }
 
 sf::Vector2f Object::getPosition()
 {
 	return m_center;
+}
+
+float Object::getRadius()
+{
+	return m_radius;
+}
+
+float Object::getMass()
+{
+	return m_mass;
 }
 
 void Object::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -159,6 +175,40 @@ void Object::rotate(float angle)
 {
 	setAngle(m_angle + angle);
 }
+
+void Object::updateCollisionBorder(const sf::RenderWindow& window)
+{
+	if ((m_center.x + m_radius) > window.getSize().x ||
+		(m_center.x - m_radius) <= 0.f)
+	{
+		m_velocity.x = -m_velocity.x;
+	}
+	if ((m_center.y + m_radius) > window.getSize().y ||
+		(m_center.y - m_radius) <= 0.f)
+	{
+		m_velocity.y = -m_velocity.y;
+	}
+}
+
+void Object::updateCollisionObjects(Object *other)
+{
+	sf::Vector2f distance = m_center - other->getPosition(); 
+	if (this != other)
+	{
+		std::cout << distance.x << " " << distance.y << std::endl;
+		if (((other->getPosition().x - m_center.x)*(other->getPosition().x - m_center.x) +
+			 (other->getPosition().y - m_center.y)*(other->getPosition().y - m_center.y)) <= (m_radius+other->m_radius)*
+																							  (m_radius+other->m_radius))
+		{	
+			this->m_velocity = -m_velocity;
+			/*if (other->getVelocity() == sf::Vector2f(0.f, 0.f))
+			{
+				other->setVelocity(m_velocity);
+			}*/
+		}
+	}
+}
+
 bool Object::checkCollisionPoint(const sf::Vector2f& mouse)
 {
 	float x_mouse = mouse.x;
@@ -185,9 +235,10 @@ void Object::dragging(const sf::Vector2f& mouse)
 	
 }
 
-void Object::update(const sf::Vector2f& mouse, sf::RenderTarget& target, const float& time)
+void Object::update(const sf::RenderWindow& window, float deltaTime)
 {
 	initShape();
-	updateVelocity(time);
+	updateCollisionBorder(window);
+	updateVelocity(deltaTime);
 }
 

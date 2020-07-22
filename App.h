@@ -28,6 +28,7 @@ public:
 	//Surface surface;
 	bool dragged = false;
 	Object* draggedCircle;
+	void collisionObjects(Object* obj1, Object* obj2);
 	void dragging(Object* circle);
 	sf::Vector2f getMouseCoords();	
 	

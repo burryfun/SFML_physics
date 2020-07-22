@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System.hpp>
@@ -30,33 +31,39 @@ public:
 	void setVelocity(sf::Vector2f velocity);
 	
 	void updateAcceleration();
-	void updateVelocity(const float& time);
+	void updateVelocity(float deltaTime);
+	
 	
 	sf::Vector2f getPosition();
 	sf::Vector2f getVelocity();
 	sf::Vector2f getAcceleration();
-	
+	float getRadius();
+	float getMass();
+
 	void move(sf::Vector2f velocity);
 	void rotate(float angle);
 	
 	bool checkCollisionPoint(const sf::Vector2f& mouse);
 	void dragging(const sf::Vector2f& mouse);
+	void updateCollisionBorder(const sf::RenderWindow& window);
+	void updateCollisionObjects(Object* other);
 	void updateEdges(const sf::Vector2f& mouse, bool& dragged);
 
-	void update(const sf::Vector2f& mouse, sf::RenderTarget& target, const float& time);
+	void update(const sf::RenderWindow& window, float deltaTime);
 	void render();
 private:
 	int				MAX_POINTS;
 	float			VISCOSITY; //Коэф-т вязкости
-	sf::Color		COLOR_SHAPE;
-	sf::Vector2f	viscosity; //Вязкость
 	sf::VertexArray m_vertices;
+	sf::Color		COLOR_SHAPE;
+	sf::Color		m_color;
+	sf::Vector2f	viscosity; //Вязкость
 	sf::Vector2f    m_center;
 	sf::Vector2f	m_velocity;
 	sf::Vector2f	m_acceleration;// while m_a != 0 : m_a -= VISCOSITY
-	sf::Color		m_color;
 	float           m_radius;
 	float           m_angle;
+	float			m_mass;
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	void initVariables();
 	void initShape();
