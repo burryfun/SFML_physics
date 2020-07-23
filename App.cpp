@@ -1,20 +1,6 @@
 #include "App.h"
 #include "Object.h"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/WindowStyle.hpp>
 
-#include <cmath>
-#include <math.h>
 
 const bool App::running() const
 {
@@ -89,8 +75,8 @@ void App::pollEvents()
 			case sf::Event::MouseButtonReleased:
 				if (sfmlEvent.mouseButton.button == sf::Mouse::Right && dragged)
 				{
-					draggedCircle->setVelocity(sf::Vector2f((draggedCircle->getPosition().x - m_mouse.x)/40,
-															(draggedCircle->getPosition().y - m_mouse.y)/40));
+					draggedCircle->setVelocity(sf::Vector2f((draggedCircle->getPosition().x - m_mouse.x),
+															(draggedCircle->getPosition().y - m_mouse.y)));
 					dragged = false;
 				}
 				break;
@@ -109,12 +95,11 @@ sf::Vector2f App::getMouseCoords()
 
 void App::collisionObjects(Object* obj1, Object* obj2)
 {
-	sf::Vector2f velocity1 = obj1->getVelocity();
 	sf::Vector2f distance = obj1->getPosition() - obj2->getPosition();
 	float distanceBetween = (sqrtf((distance.x*distance.x) + (distance.y*distance.y)));
 	if (obj1 != obj2)
 	{
-		if (sqrtf((distance.x*distance.x) + (distance.y*distance.y)) - (obj1->getRadius()+obj2->getRadius()) < 0.f)
+		if (distanceBetween < (obj1->getRadius()+obj2->getRadius()))
 		{
 
 			float overlap = (distanceBetween - obj1->getRadius() - obj2->getRadius()) / 2.f;
@@ -131,32 +116,40 @@ void App::collisionObjects(Object* obj1, Object* obj2)
 			tangential.x = -normal.y;
 			tangential.y =  normal.x;
 
-			float dotProductTangential1 = obj1->getVelocity().x*tangential.x + obj1->getVelocity().y*tangential.y;
-			float dotProductTangential2 = obj2->getVelocity().x*tangential.x + obj2->getVelocity().y*tangential.y;
+			float dotProductTangential1 = obj1->getVelocity().x*tangential.x + 
+											obj1->getVelocity().y*tangential.y;
+			float dotProductTangential2 = obj2->getVelocity().x*tangential.x +
+											obj2->getVelocity().y*tangential.y;
 			
 			float dotProductNormal1 = obj1->getVelocity().x*normal.x + obj1->getVelocity().y*normal.y;
 			float dotProductNormal2 = obj2->getVelocity().x*normal.x + obj2->getVelocity().y*normal.y;
-
-			obj1->setVelocity(dotProductTangential1*tangential + (2*obj2->getMass()*dotProductNormal2*normal +
-								dotProductNormal1*normal*(obj1->getMass()-obj2->getMass())) / 
-									(obj1->getMass()+obj2->getMass()));
-			obj2->setVelocity(dotProductTangential2*tangential + (2*obj1->getMass()*dotProductNormal1*normal +
-								dotProductNormal2*normal*(obj1->getMass()-obj2->getMass())) / 
-									(obj1->getMass()+obj2->getMass()));
+	
+			float m1 = (2.f*obj2->getMass()*dotProductNormal2 + 
+						dotProductNormal1*(obj1->getMass() - obj2->getMass())) / 
+							(obj1->getMass()+obj2->getMass());
+			/*fixed high acceleration (m2 ~ obj1.mas - obj2.mas)*/
+			float m2 = (2.f*obj1->getMass()*dotProductNormal1 + 
+						dotProductNormal2*(obj2->getMass() - obj1->getMass())) / 
+							(obj1->getMass()+obj2->getMass());
+			obj1->setVelocity(dotProductTangential1*tangential + m1*normal);
+			obj2->setVelocity(dotProductTangential2*tangential + m2*normal);
 			
-			//obj2->setVelocity(dotProductTangential2*tangential);
-			
-			//obj1->setVelocity( 2.f*obj2->getMass()/(obj1->getMass()+obj2->getMass())*obj2->getVelocity() + velocity1*(obj1->getMass()-obj2->getMass())/(obj1->getMass() + obj2->getMass()) );
 		}
 	}
 }
 
 void App::update()
 {
+	float deltaTime = 0.f;
+	deltaTime = clock.restart().asSeconds();
 	pollEvents();
-	//circle.rotate(1);
 	for (auto circle : circles)
 	{
+		for (auto circle2 : circles)
+		{
+			collisionObjects(circle, circle2);
+		}
+
 		if (dragged)
 		{
 			dragging(draggedCircle);
@@ -166,20 +159,13 @@ void App::update()
 			force[0].position = sf::Vector2f(0.f, 0.f);
 			force[1].position = sf::Vector2f(0.f, 0.f);
 		}
-		for (auto circle2 : circles)
-		{
-			collisionObjects(circle, circle2);
-			//circle->updateCollisionObjects(circle2);	
-		}
-		circle->update(*window, clock.restart().asSeconds());
+		circle->update(*window,	deltaTime);
 	}
 }
 
 void App::render()
 {
 	window->clear();
-	
-	//surface.render(window);
 	for (auto circle : circles)
 	{
 		window->draw(*circle);
