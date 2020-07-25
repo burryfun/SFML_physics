@@ -1,3 +1,4 @@
+#include <SFML/Graphics/VertexArray.hpp>
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -8,6 +9,7 @@
 
 #include "Object.h"
 #include "Surface.h"
+#include "Line.h"
 
 class App
 {
@@ -17,6 +19,7 @@ public:
 	sf::Clock clock;	
 	sf::CircleShape		shape;
 	std::vector <Object*> circles;
+	std::vector <Line*> lines;
 	//Surface surface;
 	const bool			running() const;
 	bool				dragged = false;
@@ -25,7 +28,7 @@ public:
 	void				pollEvents();
 	void				dragging(Object* circle);
 	void				collisionObjects(Object* obj1, Object* obj2);
-	
+	void				collisionCircleLine(Object* circle, Line* line);	
 	void				update();
 	void				render();
 private:
