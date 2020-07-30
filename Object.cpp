@@ -3,7 +3,7 @@
 void Object::initVariables()
 {
 	MAX_POINTS = 40;
-	VISCOSITY = 0.01f;
+	VISCOSITY = 0.f;
 	COLOR_SHAPE = sf::Color::Red;
 
 	m_radius = 10.f;
@@ -19,18 +19,17 @@ void Object::initVariables()
 
 void Object::initShape()
 {
-	float x = m_center.x + m_radius * cos((m_angle)/(static_cast<float>(MAX_POINTS-2)) * M_PI/180.f);
-	float y = m_center.x + m_radius * sin((m_angle)/(static_cast<float>(MAX_POINTS-2)) * M_PI/180.f);
-
-	for (int i = 0; i != MAX_POINTS-1; i++)
+	float x = 0.f;
+	float y = 0.f;
+	for (int i = 0; i != MAX_POINTS-2; i++)
 	{
-		x = m_center.x + m_radius * cos(((360.f)/(static_cast<float>(MAX_POINTS-2)) * i + m_angle) * M_PI/180.f);
-		y = m_center.y + m_radius * sin(((360.f)/(static_cast<float>(MAX_POINTS-2)) * i + m_angle) * M_PI/180.f);
+		x = m_center.x + m_radius * cos(((360.f)/(static_cast<float>(MAX_POINTS-3)) * i + m_angle) * M_PI/180.f);
+		y = m_center.y + m_radius * sin(((360.f)/(static_cast<float>(MAX_POINTS-3)) * i + m_angle) * M_PI/180.f);
 		m_vertices[i] = sf::Vertex(sf::Vector2f(x, y), m_color);
-		m_vertices[MAX_POINTS].position = m_vertices[0].position;	
-		m_vertices[MAX_POINTS - 1] = sf::Vertex(sf::Vector2f(m_center.x, m_center.y), sf::Color::White);
 			
 	}	
+		m_vertices[MAX_POINTS-1].position = m_vertices[0].position;	
+		m_vertices[MAX_POINTS - 2] = sf::Vertex(sf::Vector2f(m_center.x, m_center.y), sf::Color::White);
 }
 
 Object::Object()
@@ -53,14 +52,14 @@ Object::Object(sf::Vector2f center, float radius)
 
 Object::~Object()
 {
-
+	m_vertices.clear();
 }
 
 void Object::setPosition(float x, float y)
 {
 	m_center.x = x;
 	m_center.y = y;
-	initShape();	
+	//initShape();	
 }
 
 void Object::setAcceleration(sf::Vector2f acceleration)
