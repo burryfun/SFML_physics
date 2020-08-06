@@ -20,14 +20,12 @@ public:
 	void			setAcceleration(sf::Vector2f acceleration);
 	void			setVelocity(sf::Vector2f velocity);
 	
-	sf::Vector2f	getPosition();
-	sf::Vector2f	getVelocity();
-	sf::Vector2f	getAcceleration();
+	const sf::Vector2f	getPosition() const;
+	const sf::Vector2f	getVelocity() const;
+	const sf::Vector2f	getAcceleration();
 	float			getRadius();
 	float			getMass();
 
-	void			move(sf::Vector2f velocity);
-	void			rotate(float angle);
 	
 	void			updateVelocity(float deltaTime);
 	bool			checkCollisionPoint(const sf::Vector2f& mouse);
@@ -38,6 +36,7 @@ public:
 private:
 	int				MAX_POINTS;
 	float			VISCOSITY; //Коэф-т вязкости
+	float			GRAVITY;
 	sf::VertexArray m_vertices;
 	sf::Color		COLOR_SHAPE;
 	sf::Color		m_color;

@@ -1,10 +1,12 @@
 #include "Object.h"
-
+#include <SFML/System/Vector2.hpp>
+#include <iostream>
 void Object::initVariables()
 {
 	MAX_POINTS = 40;
-	VISCOSITY = 0.f;
+	VISCOSITY = 0.8f;
 	COLOR_SHAPE = sf::Color::Red;
+	GRAVITY = 0.f; // Optimal__1000.f
 
 	m_radius = 10.f;
 	m_angle = 0.f;
@@ -74,7 +76,7 @@ void Object::setVelocity(sf::Vector2f velocity)
 	m_velocity = velocity;
 }
 
-sf::Vector2f Object::getVelocity()
+const sf::Vector2f Object::getVelocity() const
 {
 	return m_velocity;
 }
@@ -83,17 +85,19 @@ void Object::updateVelocity(float deltaTime)
 {
 	//std::cout << deltaTime << std::endl;
 	//std::cout << getVelocity().x << " " << getVelocity().y << std::endl; 
+	
 	m_acceleration = -m_velocity * VISCOSITY;
+	m_acceleration.y += GRAVITY;
 	m_velocity += m_acceleration * deltaTime;
 	setPosition(m_center.x + m_velocity.x*deltaTime, m_center.y + m_velocity.y*deltaTime);
 	setAngle(atan2f(m_velocity.y, m_velocity.x)*180.f/M_PI);
-	if (std::abs(m_velocity.x) < 0.1f || std::abs(m_velocity.y) < 0.1f)
+	if ((std::abs(m_velocity.x) < 0.1f || std::abs(m_velocity.y) < 0.1f) && GRAVITY == 0.f)
 	{
 		m_velocity = sf::Vector2f(0.f,0.f);
 	}
 }
 
-sf::Vector2f Object::getPosition()
+const sf::Vector2f Object::getPosition() const
 {
 	return m_center;
 }
@@ -113,20 +117,10 @@ void Object::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_vertices);
 }
 
-void Object::move(sf::Vector2f velocity)
-{
-	setPosition(m_center.x + velocity.x, m_center.y + velocity.y);	
-}
-
 void Object::setAngle(float angle)
 {
 	m_angle = angle;
 	initShape();
-}
-
-void Object::rotate(float angle)
-{
-	setAngle(m_angle + angle);
 }
 
 void Object::updateCollisionBorder(const sf::RenderWindow& window)

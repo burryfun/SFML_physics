@@ -1,6 +1,8 @@
 #include "App.h"
+#include "Circle.h"
 #include "Line.h"
 #include "Object.h"
+#include "Shape.h"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -19,10 +21,16 @@ void App::initWindow()
 	window = new sf::RenderWindow(videoMode, "Simple physics", sf::Style::Default);	
 	window->setFramerateLimit(60);
 	force = sf::VertexArray(sf::LinesStrip, 2);
-	Line* line1 = new Line(100.f,100.f,700.f,100.f, sf::Color::Red);
-	Line* line2 = new Line(100.f,500.f,700.f,500.f, sf::Color::Red);
+	Line* line1 = new Line(400.f,200.f,700.f,50.f, sf::Color::Red);
+	Line* line2 = new Line(100.f,500.f,700.f,550.f, sf::Color::Red);
 	lines.push_back(line1);
 	lines.push_back(line2);
+	//Circle a(sf::Vector2f(100.f, 10.f), 10, sf::Color::Red, 40);
+	Circle* circle = new Circle(sf::Vector2f(100.f,100.f), 15, sf::Color::Red, 40);
+	Circle* circle2 = new Circle(sf::Vector2f(500.f,50.f), 10);
+	shapes.push_back(circle);
+	shapes.push_back(circle2);
+	core = new Core(shapes);
 }
 
 
@@ -53,6 +61,7 @@ void App::pollEvents()
 {
 	while (window->pollEvent(sfmlEvent))
 	{
+		core->pollEvents(*window,sfmlEvent);
 		switch (sfmlEvent.type)
 		{
 			case sf::Event::Closed:
@@ -64,7 +73,7 @@ void App::pollEvents()
 					window->close();
 				}
 				break;
-			case sf::Event::MouseButtonPressed:
+		/*	case sf::Event::MouseButtonPressed:
 				if (sfmlEvent.mouseButton.button == sf::Mouse::Left)
 				{
 					Object* newObject = new Object(m_mouse, 50);
@@ -94,6 +103,7 @@ void App::pollEvents()
 				m_mouse.x = sfmlEvent.mouseMove.x;
 				m_mouse.y = sfmlEvent.mouseMove.y;
 				break;
+		*/
 		}
 	}	
 }
@@ -192,7 +202,7 @@ void App::update()
 	float deltaTime = 0.f;
 	deltaTime = clock.restart().asSeconds();
 	pollEvents();
-	for (auto circle : circles)
+	/*for (auto circle : circles)
 	{
 		for (auto circle2 : circles)
 		{
@@ -213,12 +223,15 @@ void App::update()
 		}
 		circle->update(*window,	deltaTime);
 	}
+	*/
+	core->update(*window, deltaTime);
+	//core->isMouseInShape(m_mouse);
 }
 
 void App::render()
 {
 	window->clear();
-	for (auto circle : circles)
+	/*for (auto circle : circles)
 	{
 		window->draw(*circle);
 	}
@@ -227,5 +240,7 @@ void App::render()
 		window->draw(*line);
 	}
 	window->draw(force);	
+	*/
+	window->draw(*core);
 	window->display();
 }

@@ -7,9 +7,12 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include "Circle.h"
+#include "Core.h"
 #include "Object.h"
 #include "Surface.h"
 #include "Line.h"
+#include "Shape.h"
 
 class App
 {
@@ -17,8 +20,9 @@ public:
 	App();
 	~App();
 	sf::Clock clock;	
-	sf::CircleShape		shape;
-	std::vector <Object*> circles;
+	std::vector<Shape*> shapes;
+	Core* core;
+	//std::vector <Object*> circles;
 	std::vector <Line*> lines;
 	//Surface surface;
 	const bool			running() const;
