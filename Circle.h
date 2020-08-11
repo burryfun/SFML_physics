@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -21,9 +22,12 @@ public:
 			virtual void			setAngle		(float)			override;
 
 	const	virtual sf::Vector2f	getPosition		()	const		override;
-/*
-	const	virtual sf::Vector2f	getAcceleration ()	const		override;
+//	const	virtual sf::Vector2f	getAcceleration ()	const		override;
 	const	virtual sf::Vector2f	getVelocity		()	const		override;
+	const	virtual float			getMass			()	const		override;
+	const	virtual sf::FloatRect	getBounds		()	const		override;
+
+/*
 	const	virtual float			getSize			()	const		override;
 	const	virtual float			getAngle		()	const		override;
 
@@ -31,6 +35,7 @@ public:
 */
 			virtual void			initShape()						override;
 //			sf::VertexArray m_vertices;	
+	const			float			getRadius		() const;
 	int MAX_POINTS;
 	float m_radius;
 };

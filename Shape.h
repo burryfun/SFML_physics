@@ -29,9 +29,12 @@ public:
 			virtual void			setAngle		(float)			= 0;
 
 	const	virtual sf::Vector2f	getPosition		()	const		= 0;
-/*
-	const	virtual sf::Vector2f	getAcceleration ()	const		= 0;
+	//const	virtual sf::Vector2f	getAcceleration ()	const		= 0;
 	const	virtual sf::Vector2f	getVelocity		()	const		= 0;
+	const	virtual float			getMass			()	const		= 0;
+	const	virtual sf::FloatRect	getBounds		()	const		= 0;
+
+	/*
 	const	virtual float			getSize			()	const		= 0;
 	const	virtual float			getAngle		()	const		= 0;
 

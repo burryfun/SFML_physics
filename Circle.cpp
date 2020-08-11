@@ -32,7 +32,7 @@ Circle::Circle(sf::Vector2f centerPos, float radius, sf::Color color, int pointC
 		m_radius(radius), MAX_POINTS(pointCount)
 {
 	initShape();
-	m_mass = 10.f * m_radius;
+	m_mass = 0.01f * m_radius;
 }
 
 Circle::~Circle()
@@ -57,8 +57,28 @@ void Circle::setAngle(float angle)
 	m_angle = angle;
 }
 
+
 const sf::Vector2f Circle::getPosition() const
 {
 	return m_position;
+}
+
+const sf::Vector2f Circle::getVelocity() const
+{
+	return m_velocity;
+}
+
+const float Circle::getMass() const
+{
+	return m_mass;
+}
+
+const sf::FloatRect Circle::getBounds() const
+{
+	return m_bounds;
+}
+const float Circle::getRadius() const
+{
+	return m_radius;
 }
 
