@@ -10,37 +10,39 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 
 void Core::initShapes()
 {
-	Line* line2 = new Line(50, 500, 600, 250);
-//	lines.push_back(line2);	
+	Line* line1 = new Line(10, 300, 300, 400);
+	//lines.push_back(line1);	
 	
 
-	Line* line1 = new Line(400, 300, 800, 300);
-//	lines.push_back(line1);
+	Line* line2 = new Line(400, 400, 800, 200);
+	//lines.push_back(line2);
 
-	for(int i = 0; i != 5; i++)
+	for(int i = 0; i != 7; i++)
 	{
 		Circle* c = new Circle(sf::Vector2f(60*i, 20), 10+2*i);
-		m_shapes.push_back(c);
+		//m_shapes.push_back(c);
 	}
 
-	for(int i = 0; i != 5; i++)
+	for(int i = 0; i != 7; i++)
 	{
 		Circle* c = new Circle(sf::Vector2f(800 - 60*i, 20), 10+2*i);
-		m_shapes.push_back(c);
+		//m_shapes.push_back(c);
 	}
 }
 
 Core::Core()
 {
 	VISCOSITY = 0.8f;
-	//GRAVITY = 0.f; 
-	GRAVITY = 2000.f;
+	GRAVITY = 0.f; 
+	//GRAVITY = 2000.f;
 
 	dragged = false;
 	force = sf::VertexArray(sf::LineStrip, 2);
@@ -226,7 +228,6 @@ void Core::updateVelocityShapes(float deltaTime)
 {
 	for (auto i : m_shapes)
 	{
-		std::cout << i->getVelocity().y << std::endl;
 		i->m_acceleration.x = -i->m_velocity.x * VISCOSITY;
 		i->m_acceleration.y = -i->m_velocity.y * VISCOSITY;
 		i->m_acceleration.y += GRAVITY;
@@ -244,6 +245,13 @@ void Core::updateVelocityShapes(float deltaTime)
 
 void Core::pollEvents(const sf::RenderWindow& window, sf::Event& event)
 {
+	if (event.type == sf::Event::KeyPressed)
+	{
+		if (event.key.code == sf::Keyboard::S)
+		{
+			GRAVITY = std::abs(2000.f - GRAVITY);
+		}
+	}
 	if (event.type == sf::Event::MouseMoved)
 	{
 		m_mouse.x = event.mouseMove.x;

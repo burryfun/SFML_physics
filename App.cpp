@@ -8,6 +8,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 
 const bool App::running() const
@@ -104,28 +106,6 @@ void App::update()
 	float deltaTime = 0.f;
 	deltaTime = clock.restart().asSeconds();
 	pollEvents();
-	/*for (auto circle : circles)
-	{
-		for (auto circle2 : circles)
-		{
-			collisionObjects(circle, circle2);
-		}
-		for (auto line : lines)
-		{
-			collisionCircleLine(circle, line);
-		}
-		if (dragged)
-		{
-			dragging(draggedCircle);
-		}
-		else
-		{	
-			force[0].position = sf::Vector2f(0.f, 0.f);
-			force[1].position = sf::Vector2f(0.f, 0.f);
-		}
-		circle->update(*window,	deltaTime);
-	}
-	*/
 	core->update(*window, deltaTime);
 }
 
