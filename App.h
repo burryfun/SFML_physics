@@ -20,9 +20,7 @@ public:
 	App();
 	~App();
 	sf::Clock clock;	
-	std::vector<Shape*> shapes;
 	Core* core;
-	std::vector <Line*> lines;
 	//Surface surface;
 	const bool			running() const;
 	void				pollEvents();

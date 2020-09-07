@@ -28,8 +28,8 @@ void Circle::initShape()
 }
 
 Circle::Circle(sf::Vector2f centerPos, float radius, sf::Color color, int pointCount)
-	: Shape(centerPos, sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f), color, 0.f, 0.f), 
-		m_radius(radius), MAX_POINTS(pointCount)
+	: Shape(pointCount, centerPos, sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f), color, 0.f, 0.f), 
+		m_radius(radius)
 {
 	initShape();
 	m_mass = 0.01f * m_radius;

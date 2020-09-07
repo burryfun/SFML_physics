@@ -36,7 +36,6 @@ public:
 			virtual void			initShape()						override;
 //			sf::VertexArray m_vertices;	
 	const			float			getRadius		() const;
-	int MAX_POINTS;
 	float m_radius;
 };
 

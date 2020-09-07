@@ -1,9 +1,10 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "Circle.h"
 #include "Line.h"
 #include "Shape.h"
+#include "Circle.h"
+#include "Rect.h"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -17,6 +18,7 @@ public:
 	~Core();
 
 	std::vector<Shape*> m_shapes;
+	Rect* rect;
 	std::vector<Line*> lines;
 	sf::VertexArray force;
 	sf::Vector2f m_mouse;

@@ -4,8 +4,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 
-Shape::Shape(sf::Vector2f pos, sf::Vector2f acc, sf::Vector2f vel, sf::Color col, float ang, float mass)
-	: m_position(pos), m_acceleration(acc), m_velocity(vel), COLOR(col), m_angle(ang), m_mass(mass)
+Shape::Shape(int points, sf::Vector2f pos, sf::Vector2f acc, sf::Vector2f vel, sf::Color col, float ang, float mass)
+	: MAX_POINTS(points), m_position(pos), m_acceleration(acc), m_velocity(vel), COLOR(col), m_angle(ang), m_mass(mass)
 {
 	m_vertices = sf::VertexArray();
 	m_colorShape = COLOR;
@@ -16,10 +16,10 @@ Shape::~Shape()
 
 }
 
-/*void Shape::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void Shape::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(m_vertices);
-}*/
+}
 
 
 

@@ -21,11 +21,6 @@ void App::initWindow()
 	window = new sf::RenderWindow(videoMode, "Simple physics", sf::Style::Default);	
 	window->setFramerateLimit(60);
 	
-	Line* line1 = new Line(400.f,200.f,700.f,50.f, sf::Color::Red);
-	Line* line2 = new Line(100.f,500.f,700.f,550.f, sf::Color::Red);
-	lines.push_back(line1);
-	lines.push_back(line2);
-	
 	core = new Core();
 }
 

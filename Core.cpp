@@ -1,6 +1,7 @@
 #include "Core.h"
 #include "Circle.h"
 #include "Line.h"
+#include "Rect.h"
 #include "Shape.h"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -15,17 +16,13 @@
 
 void Core::initShapes()
 {
-	/*Circle* circle = new Circle(sf::Vector2f(100.f,100.f), 15, sf::Color::Red, 40);
-	Circle* circle2 = new Circle(sf::Vector2f(500.f,50.f), 10);
-	m_shapes.push_back(circle);
-	m_shapes.push_back(circle2);
-
 	Line* line2 = new Line(50, 500, 600, 250);
-	lines.push_back(line2);	
-	*/
+//	lines.push_back(line2);	
+	
 
 	Line* line1 = new Line(400, 300, 800, 300);
-	lines.push_back(line1);	
+//	lines.push_back(line1);
+
 	for(int i = 0; i != 5; i++)
 	{
 		Circle* c = new Circle(sf::Vector2f(60*i, 20), 10+2*i);
@@ -42,6 +39,7 @@ void Core::initShapes()
 Core::Core()
 {
 	VISCOSITY = 0.8f;
+	//GRAVITY = 0.f; 
 	GRAVITY = 2000.f;
 
 	dragged = false;
@@ -57,25 +55,25 @@ Core::~Core()
 
 bool Core::isMouseInShape(Shape* shape)
 {
-		float x_mouse = m_mouse.x;
-		float y_mouse = m_mouse.y;
-		/* 
-		 * FOR CIRCLES
-		*/
-		if (dynamic_cast<Circle*>(shape))
+	float x_mouse = m_mouse.x;
+	float y_mouse = m_mouse.y;
+	/* 
+	 * FOR CIRCLES
+	*/
+	if (dynamic_cast<Circle*>(shape))
+	{
+		if(((x_mouse - shape->m_position.x)*(x_mouse - shape->m_position.x) +
+			(y_mouse - shape->m_position.y)*(y_mouse - shape->m_position.y)) <= 
+				dynamic_cast<Circle*>(shape)->m_radius * dynamic_cast<Circle*>(shape)->m_radius)
 		{
-			if(((x_mouse - shape->m_position.x)*(x_mouse - shape->m_position.x) +
-				(y_mouse - shape->m_position.y)*(y_mouse - shape->m_position.y)) <= 
-					dynamic_cast<Circle*>(shape)->m_radius * dynamic_cast<Circle*>(shape)->m_radius)
+			for (int i = 0; i != (dynamic_cast<Circle*>(shape)->MAX_POINTS); i++)
 			{
-				for (int i = 0; i != (dynamic_cast<Circle*>(shape)->MAX_POINTS); i++)
-				{
-					shape->m_colorShape = sf::Color::Cyan;
-				}
-				return true;
+				shape->m_colorShape = sf::Color::Cyan;
 			}
-			shape->m_colorShape = shape->COLOR;
+			return true;
 		}
+		shape->m_colorShape = shape->COLOR;
+	}
 	return false;
 }
 
@@ -300,14 +298,18 @@ void Core::update(const sf::RenderWindow& window, float& deltaTime)
 	for (auto shape1 : m_shapes)
 	{
 		for (auto shape2 : m_shapes)
-		{	if (dynamic_cast<Circle*>(shape1) != dynamic_cast<Circle*>(shape2))
+		{	
+			if (dynamic_cast<Circle*>(shape1) && dynamic_cast<Circle*>(shape2))
 			{
 				updateCollisionCircles(dynamic_cast<Circle*>(shape1), dynamic_cast<Circle*>(shape2));
 			}
 		}
 		for (auto line : lines)
 		{
-			updateCollisionCicleLine(dynamic_cast<Circle*>(shape1), line);
+			if (dynamic_cast<Circle*>(shape1))
+			{
+				updateCollisionCicleLine(dynamic_cast<Circle*>(shape1), line);
+			}
 		}
 	}
 	updateCollisionBorder(window);
@@ -323,7 +325,7 @@ void Core::draw(sf::RenderTarget &target, sf::RenderStates states) const
 	}
 	for (auto i : m_shapes)
 	{
-		target.draw(i->m_vertices);
+		target.draw(*i);
 	}
 }
 

@@ -11,10 +11,11 @@
 #include <SFML/Window.hpp>
 #include <cmath>
 
-class Shape //: public sf::Drawable
+class Shape : public sf::Drawable
 {
 public:
-					Shape(	sf::Vector2f position = sf::Vector2f(0.f, 0.f),
+					Shape(	int MAX_POINTS = 0,
+							sf::Vector2f position = sf::Vector2f(0.f, 0.f),
 							sf::Vector2f acceleration = sf::Vector2f(0.f, 0.f),
 							sf::Vector2f velocity = sf::Vector2f(0.f, 0.f),
 							sf::Color color = sf::Color::Yellow,
@@ -45,6 +46,7 @@ public:
 			virtual void			initVariables()					= 0;
 */
 			virtual void			initShape()						= 0;
+	int MAX_POINTS;
 	sf::VertexArray m_vertices;	
 	sf::Vector2f m_position;
 	sf::Vector2f m_acceleration;
@@ -54,7 +56,7 @@ public:
 	sf::FloatRect m_bounds;
 	float m_mass;
 	float m_angle;
-	//virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 #endif
